@@ -12,6 +12,7 @@ export default tseslint.config(
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
   {
+    files: ['**/*.ts'], // Aplica solo a archivos TypeScript
     languageOptions: {
       globals: {
         ...globals.node,
@@ -20,16 +21,25 @@ export default tseslint.config(
       ecmaVersion: 5,
       sourceType: 'module',
       parserOptions: {
-        projectService: true,
+        project: true, // Habilita la detección automática de tsconfig.json
         tsconfigRootDir: import.meta.dirname,
       },
     },
-  },
-  {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
+    },
+  },
+  {
+    files: ['**/*.js'], // Aplica solo a archivos JavaScript
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+      ecmaVersion: 5,
+      sourceType: 'module',
     },
   },
 );

@@ -1,33 +1,39 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('La autorización es requerida');
+    const token = this.extracTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
     }
-    const basicPrefix = 'Basic:';
-    if (!authHeader.startsWith(basicPrefix)) {
-      throw new UnauthorizedException('Formato invalido');
-    }
-    const credential = authHeader.slice(basicPrefix.length);
-    const [email, password] = credential.split(':');
-    if (!email || !password) {
-      throw new UnauthorizedException(
-        'Invalid Authorization structure. Expected "Basic: <email>:<password>"',
-      );
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_KEY'),
+      });
+      console.log('el payload es: ', payload);
+      request['user'] = payload; //inyecto el payload con los datos del token
+    } catch {
+      throw new UnauthorizedException('Invalid token');
     }
     return true;
+  }
+  private extracTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './user.interface';
+// import { User } from './user.interface';
 
 @Injectable()
 export class UsersRepository {
@@ -66,47 +66,46 @@ export class UsersRepository {
     },
   ];
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async getUsers(page: number, limit: number) {
-    const definedPage = page;
-    const definedLimit = limit;
-    const startIndex = (definedPage - 1) * definedLimit;
-    const endIndex = startIndex + definedLimit;
-    const paginatedUsers = this.users.slice(startIndex, endIndex);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const withoutPassword = paginatedUsers.map(({ password, ...user }) => user);
-    return withoutPassword;
-  }
-  getById(id: number) {
-    return this.users.find((user) => user.id === id);
-  }
-  createUser(user: Omit<User, 'id'>): User {
-    const id = this.users.length + 1;
-    this.users = [...this.users, { id, ...user }];
-    return { id, ...user };
-  }
-  modifiedUser(id: number, user: Partial<User>) {
-    let modified = this.users.find((u) => id === u.id);
-    const index = this.users.findIndex((u) => id === u.id);
-    if (modified) {
-      modified = { ...modified, ...user };
-      this.users[index] = modified;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...withoutPassword } = modified;
-      return withoutPassword;
-    }
-    return null;
-  }
-  deleteUser(id: number) {
-    const index = this.users.findIndex((u) => u.id === id);
-    const deleted = this.users[index];
-    if (index != -1) {
-      this.users.splice(index, 1);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userDeleted } = deleted;
-    return { message: 'el usuario ha sido eliminado', userDeleted };
-  }
+  // async getUsers(page: number, limit: number) {
+  //   const definedPage = page;
+  //   const definedLimit = limit;
+  //   const startIndex = (definedPage - 1) * definedLimit;
+  //   const endIndex = startIndex + definedLimit;
+  //   const paginatedUsers = this.users.slice(startIndex, endIndex);
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   const withoutPassword = paginatedUsers.map(({ password, ...user }) => user);
+  //   return withoutPassword;
+  // }
+  // getById(id: number) {
+  //   return this.users.find((user) => user.id === id);
+  // }
+  // createUser(user: Omit<User, 'id'>): User {
+  //   const id = this.users.length + 1;
+  //   this.users = [...this.users, { id, ...user }];
+  //   return { id, ...user };
+  // }
+  // modifiedUser(id: number, user: Partial<User>) {
+  //   let modified = this.users.find((u) => id === u.id);
+  //   const index = this.users.findIndex((u) => id === u.id);
+  //   if (modified) {
+  //     modified = { ...modified, ...user };
+  //     this.users[index] = modified;
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //     const { password, ...withoutPassword } = modified;
+  //     return withoutPassword;
+  //   }
+  //   return null;
+  // }
+  // deleteUser(id: number) {
+  //   const index = this.users.findIndex((u) => u.id === id);
+  //   const deleted = this.users[index];
+  //   if (index != -1) {
+  //     this.users.splice(index, 1);
+  //   }
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   const { password, ...userDeleted } = deleted;
+  //   return { message: 'el usuario ha sido eliminado', userDeleted };
+  // }
 
   loginUser(email: string, password: string) {
     const loginRequest = this.users.find((u) => u.email == email);
