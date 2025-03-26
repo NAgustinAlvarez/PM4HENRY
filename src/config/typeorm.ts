@@ -24,9 +24,10 @@ const dbConfig = {
   password: process.env.DB_PASSWORD,
   autoLoadEntities: true,
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: ['dist/**/*.entity.{ts,js}'],
   migrations: ['dist/migrations/*.{js,ts}'],
+  ssl: true,
 };
 
 // Configuración de SQLite para pruebas

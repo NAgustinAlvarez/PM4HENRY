@@ -12,7 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
       // eslint-disable-next-line @typescript-eslint/require-await
       useFactory: async (ConfigService: ConfigService) => {
-        console.log('JWT_KEY:', process.env.JWT_KEY);
+        // console.log('JWT_KEY:', process.env.JWT_KEY);
         const secret = ConfigService.get<string>('JWT_KEY');
         if (!secret) {
           throw new Error('no hay secret');
