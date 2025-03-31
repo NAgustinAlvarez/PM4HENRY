@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -22,27 +24,28 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
   async signUpUser(credentials: CreateUserDto) {
-    console.log(credentials);
-
-    // Verificar si las contraseñas coinciden
     if (credentials.password !== credentials.confirmPassword) {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
+    const existingUser = await this.usersRepository.findOne({
+      where: { email: credentials.email },
+    });
 
-    // Hashear la contraseña
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (existingUser) {
+      throw new HttpException(
+        'El email ya está registrado',
+        HttpStatus.CONFLICT,
+      );
+    }
     const hashedPassword = await bcrypt.hash(credentials.password, 10);
-
     const newUser = this.usersRepository.create({
       ...credentials,
       password: hashedPassword,
       administrator: Role.User,
     });
-    return await this.usersRepository.save(newUser);
-    // const createdUser = await this.usersRepository.save(newUser);
-    // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const { password, ...userWithoutPassword } = createdUser;
-    // return userWithoutPassword;
+    const savedUser = await this.usersRepository.save(newUser);
+    const { password, ...userWithoutPassword } = savedUser;
+    return userWithoutPassword;
   }
   async signUser(email: string, password: string) {
     const user = await this.usersRepository.findOne({

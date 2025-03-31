@@ -4,6 +4,7 @@ import { Products } from './product.entity';
 import { Repository } from 'typeorm';
 import { Categories } from 'src/modules/categories/entities/category.entity';
 import * as data from '../../data.json';
+import { CategoriesService } from '../categories/categories.service';
 
 interface Product {
   name: string;
@@ -23,12 +24,16 @@ export class ProductsService implements OnModuleInit {
     private productsRepository: Repository<Products>,
     @InjectRepository(Categories)
     private categoriesRepository: Repository<Categories>,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   async onModuleInit() {
+    const categoriesCount = await this.categoriesRepository.count();
+    if (categoriesCount === 0) {
+      await this.categoriesService.addCategories();
+    }
     await this.seedProducts();
   }
-
   private async seedProducts() {
     try {
       const productsCount = await this.productsRepository.count();

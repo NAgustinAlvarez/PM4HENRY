@@ -27,7 +27,7 @@ const dbConfig = {
   logging: false,
   entities: ['dist/**/*.entity.{ts,js}'],
   migrations: ['dist/migrations/*.{js,ts}'],
-  ssl: true,
+  ssl: false,
 };
 
 // Configuración de SQLite para pruebas

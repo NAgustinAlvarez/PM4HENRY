@@ -1,13 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UsersService } from 'src/modules/users/users.service';
 import { Repository } from 'typeorm';
 import { Orders } from './entity/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductsService } from 'src/modules/products/products.service';
 import { Users } from 'src/modules/users/user.entity';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { OrderDetailDto } from '../orderDetail/dto/orderDetail.dto';
 import { OrderDetailService } from '../orderDetail/orderDetail.service';
 import { Products } from '../products/product.entity';
 import { OrderDetails } from '../orderDetail/entity/order.detail.entity';
@@ -33,8 +29,6 @@ export class OrdersService {
     private orderDetailRepository: Repository<OrderDetails>,
     @InjectRepository(Users) private userRepository: Repository<Users>,
     @InjectRepository(Products) private productRepository: Repository<Products>,
-    private usersService: UsersService,
-    private productService: ProductsService,
     private orderDService: OrderDetailService,
   ) {}
   async create(createOrderDto: CreateOrderDto) {
