@@ -11,7 +11,7 @@ import { ProductsModule } from '../products/products.module';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
 import { Products } from '../products/product.entity';
-import { Categories } from 'src/categories/entities/category.entity';
+import { Categories } from 'src/modules/categories/entities/category.entity';
 import { FilesModule } from '../files/files.module';
 
 @Module({

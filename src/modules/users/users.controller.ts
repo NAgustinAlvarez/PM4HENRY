@@ -49,7 +49,7 @@ export class UsersController {
     const userFound = await this.usersService.getUserById(id);
     if (!userFound) {
       throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, error: 'Producto no encontrado' },
+        { status: HttpStatus.NOT_FOUND, error: 'Usuario no encontrado' },
         HttpStatus.NOT_FOUND,
       );
     }

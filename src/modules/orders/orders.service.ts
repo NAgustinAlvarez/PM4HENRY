@@ -19,7 +19,7 @@ export class OrdersService {
   async findOne(id: string) {
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) {
-      throw Error('no hay orden ');
+      return order;
     }
     const orderDetail = await this.orderDService.findOneByOrderId(order.id, [
       'products',

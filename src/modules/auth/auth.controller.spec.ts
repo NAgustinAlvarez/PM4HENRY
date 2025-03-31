@@ -73,7 +73,7 @@ describe('AuthController', () => {
         confirmPassword: 'Password123!',
         phone: 123456789,
         country: 'USA',
-        adress: '123 Main St',
+        address: '123 Main St',
         city: 'New York',
       };
 

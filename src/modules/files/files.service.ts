@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   NotFoundException,
@@ -16,35 +18,54 @@ export class FileUploadService {
     @InjectRepository(Products)
     private productsRepository: Repository<Products>,
   ) {}
-
   async uploadFile(
-    file: UploadFileDto, // Ahora esperamos un DTO
+    file: UploadFileDto,
     id: string,
   ): Promise<{ imgUrl: string }> {
     try {
-      // Subir el archivo a Cloudinary usando los datos del DTO
+      console.log('File received:', {
+        originalname: file.originalname,
+        bufferLength: file.buffer?.length,
+      });
+
+      if (!file.buffer || file.buffer.length === 0) {
+        throw new InternalServerErrorException('File buffer is empty');
+      }
+
+      console.log('Uploading file to Cloudinary:', file.originalname);
       const url = await this.cloudinaryService.uploadFile(
         file.buffer,
         file.originalname,
       );
+      // console.log('Cloudinary upload success:', url);
 
-      // Verificar si el producto existe
+      // console.log('ID recibido para actualización:', id);
+
       const product = await this.productsRepository.findOne({ where: { id } });
+      // console.log('Product found:', product);
+
       if (!product) {
         throw new NotFoundException(`Product with ID ${id} not found`);
       }
 
-      // Actualizar el producto con la nueva URL de la imagen
-      await this.productsRepository.update(id, { imgUrl: url });
+      // Método alternativo usando save() en lugar de update()
+      product.imgUrl = url;
+      await this.productsRepository.save(product);
+      console.log('Product updated successfully:', product);
 
       return { imgUrl: url };
     } catch (error) {
+      console.error('Upload Error:', error);
+
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException(
-        'An error occurred while uploading the file or updating the product',
-      );
+
+      throw new InternalServerErrorException({
+        message: 'Detailed Error',
+        error: error.message,
+        stack: error.stack,
+      });
     }
   }
 }

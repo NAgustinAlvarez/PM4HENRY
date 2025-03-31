@@ -27,6 +27,7 @@ export class ProductsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   getProducts(@Query('page') page?: string, @Query('limit') limit?: string) {
+    // GET /products?page=2&limit=10
     const definedPage = page ? +page : 1;
     const definedLimit = limit ? +limit : 5;
     return this.productsService.getProducts(definedPage, definedLimit);

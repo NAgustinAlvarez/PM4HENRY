@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
   Length,
   Matches,
@@ -69,6 +70,7 @@ export class CreateUserDto {
    */
   @IsNotEmpty()
   @IsNumber()
+  @IsPositive()
   phone: number;
 
   /**
@@ -78,7 +80,7 @@ export class CreateUserDto {
    */
   @IsOptional()
   @IsString()
-  @Length(5, 15, {
+  @Length(5, 20, {
     message: 'El país debe tener entre 5 y 15 caracteres.',
   })
   country?: string;

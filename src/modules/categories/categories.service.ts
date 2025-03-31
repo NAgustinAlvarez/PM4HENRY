@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import * as data from '../data.json';
+import * as data from '../../data.json';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Categories } from './entities/category.entity';
 import { Repository } from 'typeorm';

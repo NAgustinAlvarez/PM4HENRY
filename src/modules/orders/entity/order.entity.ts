@@ -11,7 +11,7 @@ import { OrderDetails } from 'src/modules/orderDetail/entity/order.detail.entity
 
 @Entity({ name: 'ORDERS' })
 export class Orders {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   date: Date;

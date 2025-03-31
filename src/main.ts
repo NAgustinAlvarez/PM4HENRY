@@ -16,7 +16,9 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
     app.use(loggerGlobal);
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     const PORT = process.env.PORT ?? 3000;
     const swaggerConfig = new DocumentBuilder()
       .setTitle('Ecommerce-demo')

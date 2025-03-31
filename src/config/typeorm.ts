@@ -50,7 +50,7 @@ export default registerAs('typeorm', () => {
   return dbConfig;
 });
 
-export const connectionSource = new DataSource(dbConfig as DataSourceOptions);
+export const connectionSource = new DataSource(dbConfig as DataSourceOptions); //migraciones
 export const sqliteTestDataSourceConfig = registerAs(
   'sqlite',
   () => sqliteTestDataSourceOptions,

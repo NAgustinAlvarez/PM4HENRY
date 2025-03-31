@@ -1,51 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Products } from './product.entity';
 import { Repository } from 'typeorm';
-import { Categories } from 'src/categories/entities/category.entity';
+import { Categories } from 'src/modules/categories/entities/category.entity';
 import * as data from '../../data.json';
-// import { UploadFileDto } from '../files/dto/uploadFile.dto';
 
-// Define la interfaz para los productos
 interface Product {
   name: string;
   description: string;
   price: number;
   stock: number;
-  category: string;
   imgUrl: string;
+  category: string;
 }
 
 @Injectable()
-export class ProductsService {
+export class ProductsService implements OnModuleInit {
+  private readonly logger = new Logger(ProductsService.name);
+
   constructor(
     @InjectRepository(Products)
     private productsRepository: Repository<Products>,
     @InjectRepository(Categories)
     private categoriesRepository: Repository<Categories>,
   ) {}
-  // async uploadFile(file: UploadFileDto, id: string) {
-  //   const url = await this.fileUploadService.uploadFile({
-  //     fieldname: file.fieldname,
-  //     buffer: file.buffer,
-  //     originalname: file.originalname,
-  //     mimetype: file.mimetype,
-  //     size: file.size,
-  //   });
-  //   await this.productsRepository.update(id, { imgUrl: url });
-  //   return { imgUrl: url };
-  // }
+
+  async onModuleInit() {
+    await this.seedProducts();
+  }
+
+  private async seedProducts() {
+    try {
+      const productsCount = await this.productsRepository.count();
+
+      if (productsCount === 0) {
+        this.logger.log('Iniciando carga inicial de productos...');
+        await this.addProduct();
+        this.logger.log('Productos cargados exitosamente');
+      } else {
+        this.logger.log(
+          'Ya existen productos en la base de datos, omitiendo carga inicial',
+        );
+      }
+    } catch (error) {
+      this.logger.error('Error al cargar productos iniciales:', error);
+      throw error;
+    }
+  }
+
   async buyProduct(id: string) {
     const product = await this.productsRepository.findOne({ where: { id } });
     if (!product || product.stock == 0) {
-      throw new Error('Out of stock');
+      throw new Error('Producto agotado');
     }
     await this.productsRepository.update(id, { stock: product.stock - 1 });
-    console.log('product bought succesfully');
     return product?.price;
   }
+
   async modifiedProduct(id: string, product: Partial<Products>) {
-    // Busca el producto por su ID
     const existingProduct = await this.productsRepository.findOne({
       where: { id },
     });
@@ -56,10 +68,11 @@ export class ProductsService {
     await this.productsRepository.save(updatedProduct);
     return updatedProduct;
   }
+
   async getProducts(page: number, limit: number) {
     let products = await this.productsRepository.find({
       relations: { category: true },
-    }); // Muestra las propiedades de category
+    });
     const definedPage = page;
     const definedLimit = limit;
     const startIndex = (definedPage - 1) * definedLimit;
@@ -67,35 +80,29 @@ export class ProductsService {
     products = products.slice(startIndex, endIndex);
     return products;
   }
+
   async addProduct() {
-    // Asegúrate de que `data` sea tratado como un array de `Product`
     const typedData: Product[] = data as Product[];
-
-    // Verifica que `data` sea un array antes de usar `.map`
     if (!Array.isArray(typedData)) {
-      throw new Error('Data is not an array');
+      throw new Error('Los datos no son un array válido');
     }
-
     const categories = await this.categoriesRepository.find();
 
-    // Usa Promise.all para manejar las inserciones en paralelo
     await Promise.all(
       typedData.map(async (element) => {
         const category = categories.find(
           (category) => category.name === element.category,
         );
-
         if (!category) {
-          throw new Error(`Category "${element.category}" not found`);
+          throw new Error(`Categoría "${element.category}" no encontrada`);
         }
-
         const product = new Products();
         product.name = element.name;
         product.description = element.description;
         product.price = element.price;
         product.imgUrl = element.imgUrl;
         product.stock = element.stock;
-        product.category = category; // Relaciono una instancia del repositorio, sino no hay relación
+        product.category = category;
 
         await this.productsRepository
           .createQueryBuilder()
@@ -107,13 +114,14 @@ export class ProductsService {
       }),
     );
 
-    return 'Products added';
+    return 'Productos agregados';
   }
+
   async getProductById(id: string) {
     return this.productsRepository.findOne({ where: { id } });
   }
+
   async deleteProduct(id: string) {
-    // Busca el producto por su ID
     const product = await this.productsRepository.findOne({
       where: { id },
     });
@@ -121,12 +129,6 @@ export class ProductsService {
       return null;
     }
     await this.productsRepository.delete(id);
-    return { message: `Product with ID ${id} has been deleted` };
+    return { message: `Producto con ID ${id} ha sido eliminado` };
   }
 }
-
-// createProduct(product: Omit<Product, 'id'>): Product {
-//   return this.productRepository.createProduct(product);
-// }
-
-// }

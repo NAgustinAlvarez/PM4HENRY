@@ -47,7 +47,7 @@ export class OrdersController {
     const orderFound = await this.ordersService.findOne(id);
     if (!orderFound) {
       throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, error: 'Producto no encontrado' },
+        { status: HttpStatus.NOT_FOUND, error: 'Orden no encontrada' },
         HttpStatus.NOT_FOUND,
       );
     }

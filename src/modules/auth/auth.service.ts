@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../users/user.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from '../users/users.service';
+// import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/users.dto';
 import * as bcrypt from 'bcrypt';
@@ -19,7 +19,6 @@ import { Role } from 'src/enum/roles.enum';
 export class AuthService {
   constructor(
     @InjectRepository(Users) private usersRepository: Repository<Users>,
-    private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
   async signUpUser(credentials: CreateUserDto) {
