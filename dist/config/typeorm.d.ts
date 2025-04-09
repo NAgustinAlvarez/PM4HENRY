@@ -1,0 +1,32 @@
+import { DataSource } from 'typeorm';
+declare const _default: (() => {
+    type: string;
+    database: string | undefined;
+    host: string | undefined;
+    port: number;
+    username: string | undefined;
+    password: string | undefined;
+    autoLoadEntities: boolean;
+    synchronize: boolean;
+    logging: boolean;
+    entities: string[];
+    migrations: string[];
+    ssl: boolean;
+} | import("typeorm/driver/sqlite/SqliteConnectionOptions").SqliteConnectionOptions) & import("@nestjs/config").ConfigFactoryKeyHost<{
+    type: string;
+    database: string | undefined;
+    host: string | undefined;
+    port: number;
+    username: string | undefined;
+    password: string | undefined;
+    autoLoadEntities: boolean;
+    synchronize: boolean;
+    logging: boolean;
+    entities: string[];
+    migrations: string[];
+    ssl: boolean;
+} | import("typeorm/driver/sqlite/SqliteConnectionOptions").SqliteConnectionOptions>;
+export default _default;
+export declare const connectionSource: DataSource;
+export declare const sqliteTestDataSourceConfig: (() => import("typeorm/driver/sqlite/SqliteConnectionOptions").SqliteConnectionOptions) & import("@nestjs/config").ConfigFactoryKeyHost<import("typeorm/driver/sqlite/SqliteConnectionOptions").SqliteConnectionOptions>;
+export declare const sqliteTestDataSource: DataSource;
