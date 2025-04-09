@@ -72,7 +72,9 @@ export class CreateUserDto {
   @IsNumber()
   @IsPositive()
   phone: number;
-
+  @IsNotEmpty()
+  @IsString()
+  birthdate: string;
   /**
    * País del usuario (opcional).
    * Debe tener entre 5 y 15 caracteres.

@@ -31,6 +31,8 @@ export class Users {
   // @Column({ type: 'enum', enum: Role, default: Role.User })
   @Column({ default: Role.User })
   administrator: string;
+  @Column({ type: 'date', nullable: true })
+  birthdate: Date;
 }
 // id: debe ser un valor único generado automáticamente en formato UUID. No puede ser nulo y actúa como la clave primaria de la entidad.
 

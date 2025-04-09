@@ -38,10 +38,12 @@ export class AuthService {
       );
     }
     const hashedPassword = await bcrypt.hash(credentials.password, 10);
+    const toDate = new Date(credentials.birthdate);
     const newUser = this.usersRepository.create({
       ...credentials,
       password: hashedPassword,
       administrator: Role.User,
+      birthdate: toDate,
     });
     const savedUser = await this.usersRepository.save(newUser);
     const { password, ...userWithoutPassword } = savedUser;
